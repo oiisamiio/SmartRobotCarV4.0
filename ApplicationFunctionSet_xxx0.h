@@ -77,11 +77,11 @@ public:
   const uint8_t ObstacleDetection = 20;
 
   String CommandSerialNumber;
-  uint8_t Rocker_CarSpeed = 250;
+  uint8_t Rocker_CarSpeed = 80;
   uint8_t Rocker_temp;
 
 public:
-  uint8_t TrackingDetection_S = 250;
+  uint8_t TrackingDetection_S = 100;
   uint16_t TrackingDetection_E = 850;
   uint16_t TrackingDetection_V = 950;
 

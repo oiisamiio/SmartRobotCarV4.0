@@ -673,9 +673,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
           ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
           if (5 == i)
           {
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 150);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);
             delay_xxx(500);
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 150);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
             delay_xxx(50);
             first_is = true;
             break;
@@ -687,13 +687,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
           switch (i)
           {
           case 1:
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 150);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
             break;
           case 3:
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 150);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
             break;
           case 5:
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 150);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
             break;
           }
           delay_xxx(50);
@@ -704,7 +704,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
     }
     else //if (function_xxx(get_Distance, 20, 50))
     {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 150);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
     }
   }
   else
@@ -796,7 +796,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Follow(void)
       }
       else if ((Position_Servo == 2))
       { /*Turn right*/
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 150);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       }
       else if ((Position_Servo == 3))
       {
@@ -805,7 +805,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Follow(void)
       }
       else if ((Position_Servo == 4))
       { /*Turn left*/
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 150);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
       }
     }
   }
@@ -1710,7 +1710,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_IRrecv(void)
     case /* constant-expression */ 10:
       /* code */ if (Application_SmartRobotCarxxx0.Functional_Mode == TraceBased_mode)
       {
-        TrackingDetection_S = 250;
+        TrackingDetection_S = 80;
       }
       break;
     case /* constant-expression */ 11:
@@ -1733,7 +1733,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_IRrecv(void)
     break;
     case /* constant-expression */ 13:
     {
-      Rocker_CarSpeed = 250;
+      Rocker_CarSpeed = 80;
     }
     break;
     case /* constant-expression */ 14:
