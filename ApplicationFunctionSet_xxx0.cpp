@@ -208,6 +208,7 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   static uint8_t directionRecord = 0;
   uint8_t Kp, UpperLimit;
   uint8_t speed = is_speed;
+  uint8_t storespeed = speed;
   //Control mode that requires straight line movement adjustment（Car will has movement offset easily in the below mode，the movement cannot achieve the effect of a relatively straight direction
   //so it needs to add control adjustment）
   switch (Application_SmartRobotCarxxx0.Functional_Mode)
@@ -271,38 +272,74 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   case /* constant-expression */ Left:
     /* code */
     directionRecord = 3;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_just, /*speed_A*/ speed,
                                            /*direction_B*/ direction_back, /*speed_B*/ speed, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ Right:
     /* code */
     directionRecord = 4;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_back, /*speed_A*/ speed,
                                            /*direction_B*/ direction_just, /*speed_B*/ speed, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ LeftForward:
     /* code */
     directionRecord = 5;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_just, /*speed_A*/ speed,
                                            /*direction_B*/ direction_just, /*speed_B*/ speed / 2, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ LeftBackward:
     /* code */
     directionRecord = 6;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_back, /*speed_A*/ speed,
                                            /*direction_B*/ direction_back, /*speed_B*/ speed / 2, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ RightForward:
     /* code */
     directionRecord = 7;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_just, /*speed_A*/ speed / 2,
                                            /*direction_B*/ direction_just, /*speed_B*/ speed, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ RightBackward:
     /* code */
     directionRecord = 8;
+    if (speed > 80)
+    {
+      storespeed = speed;
+      speed = 80;
+    }
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_back, /*speed_A*/ speed / 2,
                                            /*direction_B*/ direction_back, /*speed_B*/ speed, /*controlED*/ control_enable); //Motor control
+    speed = storespeed;
     break;
   case /* constant-expression */ stop_it:
     /* code */
@@ -546,9 +583,16 @@ void ApplicationFunctionSet::ApplicationFunctionSet_RGB(void)
 
 /*Rocker control mode*/
 void ApplicationFunctionSet::ApplicationFunctionSet_Rocker(void)
-{
+{ 
+    static boolean first_is = true;
   if (Application_SmartRobotCarxxx0.Functional_Mode == Rocker_mode)
-  {
+  {    
+    if (first_is == true) //Enter the mode for the first time, and modulate the steering gear to 90 degrees
+    {
+      AppServo.DeviceDriverSet_Servo_control(90 /*Position_angle*/);
+      first_is = false;
+    }
+
     ApplicationFunctionSet_SmartRobotCarMotionControl(Application_SmartRobotCarxxx0.Motion_Control /*direction*/, Rocker_CarSpeed /*speed*/);
   }
 }
@@ -676,7 +720,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
             ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);
             delay_xxx(500);
             ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
-            delay_xxx(50);
+            delay_xxx(100);
             first_is = true;
             break;
           }
@@ -696,7 +740,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
             ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
             break;
           }
-          delay_xxx(50);
+          delay_xxx(100);
           first_is = true;
           break;
         }
@@ -723,8 +767,16 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Follow(void)
   static uint8_t Position_Servo = 1;
   static uint8_t timestamp = 3;
   static uint8_t OneCycle = 1;
+    static boolean first_is = true;
+
   if (Application_SmartRobotCarxxx0.Functional_Mode == Follow_mode)
   {
+    
+    if (first_is == true) //Enter the mode for the first time, and modulate the steering gear to 90 degrees
+    {
+      AppServo.DeviceDriverSet_Servo_control(90 /*Position_angle*/);
+      first_is = false;
+    }
 
     if (Car_LeaveTheGround == false)
     {
@@ -1668,36 +1720,36 @@ void ApplicationFunctionSet::ApplicationFunctionSet_IRrecv(void)
   {
     switch (IRrecv_button)
     {
-    case /* constant-expression */ 1:
+    case /* constant-expression */ 1: // Key Forward
       /* code */
       Application_SmartRobotCarxxx0.Motion_Control = Forward;
       break;
-    case /* constant-expression */ 2:
+    case /* constant-expression */ 2: // Key Backward
       /* code */
       Application_SmartRobotCarxxx0.Motion_Control = Backward;
       break;
-    case /* constant-expression */ 3:
+    case /* constant-expression */ 3: // Key Left
       /* code */
       Application_SmartRobotCarxxx0.Motion_Control = Left;
       break;
-    case /* constant-expression */ 4:
+    case /* constant-expression */ 4: /// Key Right
       /* code */
       Application_SmartRobotCarxxx0.Motion_Control = Right;
       break;
-    case /* constant-expression */ 5:
+    case /* constant-expression */ 5: // Key OK
       /* code */
       Application_SmartRobotCarxxx0.Functional_Mode = Standby_mode;
       break;
-    case /* constant-expression */ 6:
+    case /* constant-expression */ 6: // Key 1
       /* code */ Application_SmartRobotCarxxx0.Functional_Mode = TraceBased_mode;
       break;
-    case /* constant-expression */ 7:
+    case /* constant-expression */ 7: // Key 2
       /* code */ Application_SmartRobotCarxxx0.Functional_Mode = ObstacleAvoidance_mode;
       break;
-    case /* constant-expression */ 8:
+    case /* constant-expression */ 8: // Key 3
       /* code */ Application_SmartRobotCarxxx0.Functional_Mode = Follow_mode;
       break;
-    case /* constant-expression */ 9:
+    case /* constant-expression */ 9: // Key 4 *TraceBased only
       /* code */ if (Application_SmartRobotCarxxx0.Functional_Mode == TraceBased_mode) //Adjust the threshold of the line tracking module to adapt the actual environment
       {
         if (TrackingDetection_S < 600)
@@ -1707,13 +1759,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_IRrecv(void)
       }
 
       break;
-    case /* constant-expression */ 10:
+    case /* constant-expression */ 10: // Key 5 *TraceBased only
       /* code */ if (Application_SmartRobotCarxxx0.Functional_Mode == TraceBased_mode)
       {
         TrackingDetection_S = 80;
       }
       break;
-    case /* constant-expression */ 11:
+    case /* constant-expression */ 11: // Key 6 *TraceBased only
       /* code */ if (Application_SmartRobotCarxxx0.Functional_Mode == TraceBased_mode)
       {
         if (TrackingDetection_S > 30)
@@ -1722,29 +1774,56 @@ void ApplicationFunctionSet::ApplicationFunctionSet_IRrecv(void)
         }
       }
       break;
-
-    case /* constant-expression */ 12:
+    case /* constant-expression */ 12: // Key 7 *Rocker only
     {
-      if (Rocker_CarSpeed < 255)
+      //if (Rocker_CarSpeed < 255)
+      //{
+        //Rocker_CarSpeed += 5;
+      //}
+      if (Rocker_CarSpeed != 254)
       {
-        Rocker_CarSpeed += 5;
+        Rocker_CarSpeed = 254;
       }
     }
     break;
-    case /* constant-expression */ 13:
+    case /* constant-expression */ 13: // Key 8 *Rocker only
     {
       Rocker_CarSpeed = 80;
     }
     break;
-    case /* constant-expression */ 14:
+    case /* constant-expression */ 14: // Key 9 *Rocker only
     {
-      if (Rocker_CarSpeed > 50)
+      if (Rocker_CarSpeed > 80)
       {
         Rocker_CarSpeed -= 5;
       }
     }
     break;
-
+    case /* constant-expression */ 15: // Key * *dummy duplicate
+    {
+      //if (Rocker_CarSpeed < 255)
+      //{
+        //Rocker_CarSpeed += 5;
+      //}
+      if (Rocker_CarSpeed != 254)
+      {
+        Rocker_CarSpeed = 254;
+      }
+    }
+    break;
+    case /* constant-expression */ 16: // Key 0 *dummy duplicate
+    {
+      Rocker_CarSpeed = 80;
+    }
+    break;
+    case /* constant-expression */ 17: // Key # *dummy duplicate
+    {
+      if (Rocker_CarSpeed > 80)
+      {
+        Rocker_CarSpeed -= 5;
+      }
+    }
+    break;
     default:
       Application_SmartRobotCarxxx0.Functional_Mode = Standby_mode;
       break;
